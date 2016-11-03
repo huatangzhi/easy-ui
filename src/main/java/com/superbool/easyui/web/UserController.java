@@ -30,7 +30,7 @@ public class UserController {
     @Autowired
     UserInfoDao userInfoDao;
 
-    @RequestMapping(value = "/delete", method = RequestMethod.POST, produces = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @RequestMapping(value = "/userDelete", method = RequestMethod.POST, produces = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void delete(UserInfo userInfo, Model model) {
         int delId = userInfo.getId();
 
@@ -62,7 +62,7 @@ public class UserController {
         try {
             int saveNums = 0;
 
-            if (Strings.isNullOrEmpty(userInfo.getCardId())) {
+            if (userInfo.getId()>0) {
                 saveNums = userInfoDao.userModify(userInfo);
             } else {
                 saveNums = userInfoDao.userAdd(userInfo);
@@ -73,7 +73,7 @@ public class UserController {
                 result.addProperty("success", "true");
             } else {
                 result.addProperty("success", "true");
-                result.addProperty("errorMsg", "����ʧ��");
+                result.addProperty("errorMsg", "服务器错误");
             }
             JsonElement element = new Gson().toJsonTree(userInfo);
             result.add("data", element);

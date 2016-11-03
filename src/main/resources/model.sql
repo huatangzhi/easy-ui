@@ -3,7 +3,7 @@ CREATE TABLE user_info (
   COMMENT '自增id',
   `card_id`    VARCHAR(20)      DEFAULT NULL
   COMMENT '身份证号码',
-  `cardId`     VARCHAR(20)      DEFAULT NULL
+  `name`     VARCHAR(20)      DEFAULT NULL
   COMMENT '姓名',
   `department` VARCHAR(20)      DEFAULT NULL
   COMMENT '所在机构',

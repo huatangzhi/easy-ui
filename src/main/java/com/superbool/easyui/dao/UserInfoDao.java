@@ -18,7 +18,7 @@ public class UserInfoDao {
     private JdbcTemplate jdbcTemplate;
 
     public ResultSet userList(PageBean pageBean) throws Exception {
-        String sql = "select * from t_user limit ?,?";
+        String sql = "select * from user_info limit ?,?";
         //PreparedStatement pstmt = jdbcTemplate.prepareStatement(sql);
         //pstmt.setInt(1, pageBean.getStart());
         //pstmt.setInt(2, pageBean.getRows());
@@ -27,7 +27,7 @@ public class UserInfoDao {
     }
 
     public int userCount() throws Exception {
-        String sql = "select count(*) as total from t_user";
+        String sql = "select count(*) as total from user_info";
         //PreparedStatement pstmt = connection.prepareStatement(sql);
         //ResultSet rs = pstmt.executeQuery();
         //if (rs.next()) {
@@ -39,7 +39,7 @@ public class UserInfoDao {
     }
 
     public int userDelete(int delId) throws Exception {
-        String sql = "delete from t_user where id=?";
+        String sql = "delete from user_info where id=%s";
       /*  PreparedStatement pstmt = connection.prepareStatement(sql);
         pstmt.setInt(1, delId);
         return pstmt.executeUpdate();*/
@@ -54,12 +54,16 @@ public class UserInfoDao {
         pstmt.setString(3, userInfo.getDepartment());
         pstmt.setString(4, userInfo.getSameId());
         return pstmt.executeUpdate();*/
+
+        String sql   = "insert into user_info (card_id,name,department) values(%s,%s,%s)";
+        jdbcTemplate
+
         return 0;
     }
 
     public int userModify(UserInfo userInfo) throws Exception {
-/*        String sql = "update t_user set name=?,phone=?,email=?,qq=? where id=?";
-        PreparedStatement pstmt = connection.prepareStatement(sql);
+       String sql = "update user_info set name=?,phone=?,email=?,qq=? where id=?";
+ /*       PreparedStatement pstmt = connection.prepareStatement(sql);
         pstmt.setString(1, userInfo.getCardId());
         pstmt.setString(2, userInfo.getName());
         pstmt.setString(3, userInfo.getDepartment());
