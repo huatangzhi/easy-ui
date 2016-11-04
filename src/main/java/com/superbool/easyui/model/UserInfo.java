@@ -9,6 +9,7 @@ public class UserInfo {
     private String sameId;
     private String createAt;
     private String modifyAt;
+    private String isPass;
 
     public UserInfo() {
     }
@@ -85,6 +86,14 @@ public class UserInfo {
         this.modifyAt = modifyAt;
     }
 
+    public String getIsPass() {
+        return isPass;
+    }
+
+    public void setIsPass(String isPass) {
+        this.isPass = isPass;
+    }
+
     @Override
     public String toString() {
         return "UserInfo{" +
@@ -95,6 +104,7 @@ public class UserInfo {
                 ", sameId='" + sameId + '\'' +
                 ", createAt='" + createAt + '\'' +
                 ", modifyAt='" + modifyAt + '\'' +
+                ", isPass='" + isPass + '\'' +
                 '}';
     }
 }

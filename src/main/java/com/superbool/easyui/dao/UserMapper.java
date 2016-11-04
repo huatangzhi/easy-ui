@@ -1,6 +1,7 @@
 package com.superbool.easyui.dao;
 
 import com.superbool.easyui.model.UserInfo;
+import org.assertj.core.util.Strings;
 import org.springframework.jdbc.core.RowMapper;
 
 
@@ -24,6 +25,11 @@ public class UserMapper implements RowMapper<UserInfo> {
         userInfo.setSameId(rs.getString(5));
         userInfo.setCreateAt(rs.getString(6));
         userInfo.setModifyAt(rs.getString(7));
+        if (Strings.isNullOrEmpty(userInfo.getSameId())) {
+            userInfo.setIsPass("是");
+        } else {
+            userInfo.setIsPass("否");
+        }
         return userInfo;
     }
 }

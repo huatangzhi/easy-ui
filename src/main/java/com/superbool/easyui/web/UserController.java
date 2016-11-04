@@ -75,7 +75,7 @@ public class UserController {
 
         } catch (Exception e) {
             LOGGER.error("userSave error", e);
-            result.addProperty("errorMsg", "服务器错误");
+            result.addProperty("errorMsg", "身份证号和机构名称已存在，请检查输入");
         }
 
         return result.toString();
