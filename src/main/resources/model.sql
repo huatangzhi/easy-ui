@@ -1,7 +1,7 @@
 CREATE TABLE user_info (
   `id`         INT(11) NOT NULL AUTO_INCREMENT
   COMMENT '自增id',
-  `card_id`    VARCHAR(20)      DEFAULT NULL
+  `card_id`    VARCHAR(20)      NOT NULL
   COMMENT '身份证号码',
   `name`     VARCHAR(20)      DEFAULT NULL
   COMMENT '姓名',

@@ -62,11 +62,13 @@ public class UserController {
         try {
             int saveNums = 0;
 
-            if (userInfo.getId()>0) {
+            if (userInfo.getId() != null) {
                 saveNums = userInfoDao.userModify(userInfo);
             } else {
                 saveNums = userInfoDao.userAdd(userInfo);
             }
+
+            LOGGER.info("saveNums={}", saveNums);
 
             JsonObject result = new JsonObject();
             if (saveNums == 1) {
@@ -88,27 +90,31 @@ public class UserController {
         return null;
     }
 
-    @RequestMapping(value = "/list", method = RequestMethod.POST, produces = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public void list(UserInfo userInfo,
-                     @RequestParam(value = "page") String page,
-                     @RequestParam(value = "rows") String rows, Model model) {
+    @RequestMapping(value = "/userList", method = RequestMethod.POST, produces = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @ResponseBody
+    public String list(@RequestParam(value = "page") Integer page, @RequestParam(value = "rows") Integer rows) {
 
-        PageBean pageBean = new PageBean(Integer.parseInt(page), Integer.parseInt(rows));
+        LOGGER.info("page={},rows={}", page, rows);
 
         try {
-
+            page--;
             JsonObject result = new JsonObject();
-            JsonArray jsonArray = JsonUtil.formatRsToJsonArray(userInfoDao.userList(pageBean));
+            JsonElement jsonElement = new Gson().toJsonTree(userInfoDao.userList(page, rows));
             int total = userInfoDao.userCount();
-            result.add("rows", jsonArray);
+            result.add("rows", jsonElement);
             result.addProperty("total", total);
-            model.addAttribute(result);
+
+            LOGGER.info("result={}",result);
+
+            return result.toString();
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } finally {
 
         }
+
+        return null;
     }
 
 
