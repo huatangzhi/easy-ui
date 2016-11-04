@@ -8,4 +8,4 @@ CREATE TABLE user_info (
   modify_at  TIMESTAMP DEFAULT (DATETIME('now', 'localtime'))
 );
 CREATE UNIQUE INDEX idx_card_depart
-  ON user_info (card_id, name, department);
+  ON user_info (card_id, department);

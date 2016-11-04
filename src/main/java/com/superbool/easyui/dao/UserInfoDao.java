@@ -16,8 +16,8 @@ public class UserInfoDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<UserInfo> userList(int start, int rows) throws Exception {
-        String sql = "SELECT * FROM user_info GROUP BY department limit ? offset ? ";
+    public List<UserInfo> getByPage(int start, int rows) throws Exception {
+        String sql = "SELECT * FROM user_info GROUP BY department,id limit ? offset ? ";
 
         List<UserInfo> userInfoList = jdbcTemplate.query(
                 sql,
@@ -28,7 +28,7 @@ public class UserInfoDao {
     }
 
     public List<UserInfo> getByCardId(String cardId) throws Exception {
-        String sql = "SELECT * FROM user_info WHERE card_id=?";
+        String sql = "SELECT * FROM user_info WHERE card_id=? ORDER BY id";
 
         List<UserInfo> userInfoList = jdbcTemplate.query(
                 sql,
@@ -36,6 +36,37 @@ public class UserInfoDao {
                 new UserMapper());
 
         return userInfoList;
+    }
+
+    public UserInfo getById(Integer id) throws Exception {
+
+        String sql = "SELECT * FROM user_info WHERE id=?";
+
+        UserInfo userInfo = jdbcTemplate.queryForObject(
+                sql,
+                new Object[]{id},
+                new UserMapper());
+
+        return userInfo;
+
+
+    }
+
+    public int updateSameId(String cardId, String sameId) {
+        String sql = "UPDATE user_info SET same_id = ? WHERE card_id=?";
+        return jdbcTemplate.update(sql, sameId, cardId);
+    }
+
+    public int updateSameId(String cardId) throws Exception {
+        List<UserInfo> sameUsers = getByCardId(cardId);
+        if (sameUsers != null && sameUsers.size() > 0) {
+            String sameId = null;
+            if (sameUsers.size() > 1) {
+                sameId = sameUsers.stream().map(user -> user.getId().toString()).collect(Collectors.joining(","));
+            }
+            return updateSameId(cardId, sameId);
+        }
+        return 0;
     }
 
     public int userCount() throws Exception {
@@ -46,27 +77,34 @@ public class UserInfoDao {
 
     public int userDelete(int delId) throws Exception {
         String sql = "DELETE FROM user_info WHERE id=?";
-        return jdbcTemplate.update(sql, delId);
+        UserInfo userInfo = getById(delId);
+        int result = jdbcTemplate.update(sql, delId);
+        updateSameId(userInfo.getCardId());
+
+        return result;
     }
 
     public int userAdd(UserInfo userInfo) throws Exception {
         String sql = "INSERT INTO user_info (card_id, name, department) VALUES (?,?,?)";
-        return jdbcTemplate.update(sql, userInfo.getCardId(), userInfo.getName(), userInfo.getDepartment());
+        int result = jdbcTemplate.update(sql, userInfo.getCardId(), userInfo.getName(), userInfo.getDepartment());
+        //更新sameId信息
+        updateSameId(userInfo.getCardId());
+
+        return result;
     }
 
-    public int userAddALL(UserInfo userInfo) throws Exception {
-        List<UserInfo> sameUsers = getByCardId(userInfo.getCardId());
-        String sameId = sameUsers.stream().map(user -> user.getId().toString()).collect(Collectors.joining(","));
-        System.out.println(sameId);
-        String sql = "INSERT INTO user_info (card_id, name, department,same_id) VALUES (?,?,?,?)";
-        //return jdbcTemplate.update(sql, userInfo.getCardId(), userInfo.getName(), userInfo.getDepartment());
-        return 0;
-    }
 
     public int userModify(UserInfo userInfo) throws Exception {
-        String sql = "UPDATE user_info SET card_id=?,name=?,department=?,same_id=? WHERE id=?";
+        String sql = "UPDATE user_info SET card_id=?,name=?,department=? WHERE id=?";
+        UserInfo user = getById(userInfo.getId());
+        int result = jdbcTemplate.update(sql, userInfo.getCardId(), userInfo.getName(),
+                userInfo.getDepartment(), userInfo.getId());
 
-        return jdbcTemplate.update(sql, userInfo.getCardId(), userInfo.getName(),
-                userInfo.getDepartment(), userInfo.getSameId(), userInfo.getId());
+        if (!user.getCardId().equals(userInfo.getCardId())) {
+            updateSameId(user.getCardId());
+            updateSameId(userInfo.getCardId());
+        }
+
+        return result;
     }
 }

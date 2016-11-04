@@ -3,5 +3,5 @@ server:
 
 spring:
   datasource:
-    url: jdbc:sqlite:easy-ui.db
+    url: jdbc:sqlite:data.db
     driver-class-name: org.sqlite.JDBC

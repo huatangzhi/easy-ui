@@ -22,6 +22,8 @@ public class UserMapper implements RowMapper<UserInfo> {
         userInfo.setName(rs.getString(3));
         userInfo.setDepartment(rs.getString(4));
         userInfo.setSameId(rs.getString(5));
+        userInfo.setCreateAt(rs.getString(6));
+        userInfo.setModifyAt(rs.getString(7));
         return userInfo;
     }
 }

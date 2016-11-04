@@ -1,20 +1,15 @@
 package com.superbool.easyui.web;
 
-import com.google.common.base.Strings;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.superbool.easyui.dao.UserInfoDao;
-import com.superbool.easyui.model.PageBean;
 import com.superbool.easyui.model.UserInfo;
-import com.superbool.easyui.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,35 +25,34 @@ public class UserController {
     @Autowired
     UserInfoDao userInfoDao;
 
-    @RequestMapping(value = "/userDelete", method = RequestMethod.POST, produces = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public void delete(UserInfo userInfo, Model model) {
-        int delId = userInfo.getId();
+    @RequestMapping(value = "/userDelete", method = RequestMethod.POST)
+    @ResponseBody
+    public String delete(@RequestParam(value = "delId") Integer delId) {
+        LOGGER.info("user delete user={}", delId);
 
+        JsonObject jsonObject = new JsonObject();
         try {
-
             int delNums = userInfoDao.userDelete(delId);
             if (delNums == 1) {
-                model.addAttribute("success", "true");
+                jsonObject.addProperty("success", "true");
             } else {
-                model.addAttribute("errorMsg", "ɾ��ʧ��");
+                jsonObject.addProperty("errorMsg", "删除失败");
             }
 
         } catch (Exception e) {
 
-            e.printStackTrace();
-        } finally {
-
+            LOGGER.error("userDelete error", e);
+            jsonObject.addProperty("errorMsg", "服务器错误");
         }
-
+        return jsonObject.toString();
     }
 
-    @RequestMapping(value = "/userSave", method = RequestMethod.POST, produces = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @RequestMapping(value = "/userSave", method = RequestMethod.POST)
     @ResponseBody
-    public JsonObject save(UserInfo userInfo) {
+    public String save(UserInfo userInfo) {
 
         LOGGER.info("save user={}", userInfo);
-
-
+        JsonObject result = new JsonObject();
         try {
             int saveNums = 0;
 
@@ -70,24 +64,21 @@ public class UserController {
 
             LOGGER.info("saveNums={}", saveNums);
 
-            JsonObject result = new JsonObject();
             if (saveNums == 1) {
                 result.addProperty("success", "true");
             } else {
                 result.addProperty("success", "true");
-                result.addProperty("errorMsg", "服务器错误");
+                result.addProperty("errorMsg", "没有需要的更新");
             }
             JsonElement element = new Gson().toJsonTree(userInfo);
             result.add("data", element);
-            return result;
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } finally {
 
+        } catch (Exception e) {
+            LOGGER.error("userSave error", e);
+            result.addProperty("errorMsg", "服务器错误");
         }
 
-        return null;
+        return result.toString();
     }
 
     @RequestMapping(value = "/userList", method = RequestMethod.POST, produces = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -95,34 +86,26 @@ public class UserController {
     public String list(@RequestParam(value = "page") Integer page, @RequestParam(value = "rows") Integer rows) {
 
         LOGGER.info("page={},rows={}", page, rows);
+        JsonObject result = new JsonObject();
 
         try {
             page--;
-            JsonObject result = new JsonObject();
-            JsonElement jsonElement = new Gson().toJsonTree(userInfoDao.userList(page, rows));
+
+            JsonElement jsonElement = new Gson().toJsonTree(userInfoDao.getByPage(page * rows, rows));
             int total = userInfoDao.userCount();
             result.add("rows", jsonElement);
             result.addProperty("total", total);
 
-            LOGGER.info("result={}",result);
+            LOGGER.info("result={}", result);
 
-            return result.toString();
+
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } finally {
 
+            LOGGER.error("userList error!", e);
+            result.addProperty("errorMsg", "服务器错误");
         }
 
-        return null;
+        return result.toString();
     }
-
-
-    @RequestMapping(value = "/hello", method = RequestMethod.GET)
-    @ResponseBody
-    public String hello() {
-        return "hello world";
-    }
-
 
 }

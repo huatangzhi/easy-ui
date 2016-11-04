@@ -7,6 +7,8 @@ public class UserInfo {
     private String name;
     private String department;
     private String sameId;
+    private String createAt;
+    private String modifyAt;
 
     public UserInfo() {
     }
@@ -67,6 +69,21 @@ public class UserInfo {
         this.name = name;
     }
 
+    public String getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(String createAt) {
+        this.createAt = createAt;
+    }
+
+    public String getModifyAt() {
+        return modifyAt;
+    }
+
+    public void setModifyAt(String modifyAt) {
+        this.modifyAt = modifyAt;
+    }
 
     @Override
     public String toString() {
@@ -76,6 +93,8 @@ public class UserInfo {
                 ", name='" + name + '\'' +
                 ", department='" + department + '\'' +
                 ", sameId='" + sameId + '\'' +
+                ", createAt='" + createAt + '\'' +
+                ", modifyAt='" + modifyAt + '\'' +
                 '}';
     }
 }
