@@ -1,16 +1,7 @@
 CREATE TABLE user_info (
-  `id`         INT(11) NOT NULL AUTO_INCREMENT
-  COMMENT '自增id',
-  `card_id`    VARCHAR(20)      NOT NULL
-  COMMENT '身份证号码',
-  `name`     VARCHAR(20)      DEFAULT NULL
-  COMMENT '姓名',
-  `department` VARCHAR(20)      DEFAULT NULL
-  COMMENT '所在机构',
-  `same_id`    VARCHAR(20)      DEFAULT NULL
-  COMMENT '身份证号码相同的部门的人的id',
-  PRIMARY KEY (`id`)
+  id         INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  card_id    TEXT                          NOT NULL,
+  name       TEXT                          NOT NULL,
+  department TEXT                          NOT NULL,
+  same_id    TEXT DEFAULT NULL
 )
-  ENGINE = InnoDB
-  AUTO_INCREMENT = 24
-  DEFAULT CHARSET = utf8mb4;
