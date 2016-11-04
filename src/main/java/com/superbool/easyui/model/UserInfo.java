@@ -11,6 +11,15 @@ public class UserInfo {
     public UserInfo() {
     }
 
+
+    public UserInfo(String cardId, String name, String department) {
+        this.cardId = cardId;
+        this.name = name;
+        this.department = department;
+
+    }
+
+
     public UserInfo(String cardId, String name, String department, String sameId) {
         this.cardId = cardId;
         this.name = name;
