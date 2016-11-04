@@ -48,9 +48,30 @@ public class UserInfoDao {
                 new UserMapper());
 
         return userInfo;
-
-
     }
+
+    public List<UserInfo> getByName(String name) throws Exception {
+        String sql = "SELECT * FROM user_info WHERE name=? ORDER BY id";
+
+        List<UserInfo> userInfoList = jdbcTemplate.query(
+                sql,
+                new Object[]{name},
+                new UserMapper());
+
+        return userInfoList;
+    }
+
+    public List<UserInfo> getByDepart(String depart) throws Exception {
+        String sql = "SELECT * FROM user_info WHERE department=? ORDER BY id";
+
+        List<UserInfo> userInfoList = jdbcTemplate.query(
+                sql,
+                new Object[]{depart},
+                new UserMapper());
+
+        return userInfoList;
+    }
+
 
     public int updateSameId(String cardId, String sameId) {
         String sql = "UPDATE user_info SET same_id = ? WHERE card_id=?";

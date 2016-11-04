@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created by superbool on 2016/11/3.
@@ -104,6 +107,56 @@ public class UserController {
             LOGGER.error("userList error!", e);
             result.addProperty("errorMsg", "服务器错误");
         }
+
+        return result.toString();
+    }
+
+
+    @RequestMapping(value = "/userSearch", method = RequestMethod.POST)
+    @ResponseBody
+    public String search(@RequestParam(value = "key") String key,
+                         @RequestParam(value = "value") String value) {
+        LOGGER.info("search key={},value={}", key, value);
+
+        List<UserInfo> userInfos = new ArrayList<>();
+        JsonObject result = new JsonObject();
+        try {
+            switch (key) {
+                case "cardId":
+                    userInfos = userInfoDao.getByCardId(value);
+                    break;
+                case "name":
+                    userInfos = userInfoDao.getByName(value);
+                    break;
+                case "department":
+                    userInfos = userInfoDao.getByDepart(value);
+                    break;
+                case "id":
+
+                    try {
+                        int id = Integer.valueOf(value);
+                        userInfos.add(userInfoDao.getById(id));
+                    } catch (NumberFormatException e) {
+                        result.addProperty("errorMsg", "编号必须是整数");
+                    } catch (Exception e) {
+                        LOGGER.error("get by id error id={}", value, e);
+                        result.addProperty("errorMsg", "没有查询到相关数据");
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            JsonElement jsonElement = new Gson().toJsonTree(userInfos);
+            result.add("rows", jsonElement);
+            result.addProperty("total", userInfos.size());
+
+        } catch (Exception e) {
+            LOGGER.error("userSearch error!", e);
+            result.addProperty("errorMsg", "服务器错误");
+        }
+
+        LOGGER.info("return result={}", result);
 
         return result.toString();
     }

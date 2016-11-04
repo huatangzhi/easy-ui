@@ -45,6 +45,10 @@
             }
         }
 
+        function getAll() {
+            $("#dg").datagrid("reload");
+        }
+
 
         function saveUser() {
             $('#fm').form('submit', {
@@ -64,6 +68,30 @@
                     }
                 }
             });
+        }
+        function searchUser() {
+            $('#dg').datagrid('loadData', {total: 0, rows: []});
+            $('#sc').form('submit', {
+                url: 'userSearch',
+                onSubmit: function () {
+                    return $(this).form('validate');
+                },
+                success: function (result) {
+                    var result = eval('(' + result + ')');
+                    if (result.errorMsg) {
+                        $.messager.alert("警告", result.errorMsg);
+                    }
+                    else if (result.total == 0) {
+                        $.messager.alert("系统提示", "未查询到相关数据");
+                        return;
+                    }
+                    else {
+                        $('#dg').datagrid('loadData', {total: result.total, rows: result.rows});
+                        return;
+                    }
+                }
+            });
+            return false;
         }
 
     </script>
@@ -90,6 +118,21 @@
     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true"
        onclick="editUser()">编辑用户</a>
     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteUser()">删除用户</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-get" plain="true" onclick="getAll()">获取全部</a>
+
+    <div style="float:right;">
+        <form id="sc" action="userSearch" method="post" onsubmit="return searchUser();" style="display:inline;">
+            <select name="key" style="padding-right: 20px;">
+                <option value="name">姓名</option>
+                <option value="cardId">身份证号</option>
+                <option value="department">机构名称</option>
+                <option value="id">编号</option>
+            </select>
+            <input type="text" name="value" style="padding-right: 20px;width: 200px"/>
+            <input type="submit" value="搜索" style="padding-right: 100px;"/>
+        </form>
+    </div>
+
 </div>
 
 <div id="dlg" class="easyui-dialog" style="width:400px;height:250px;padding:10px 20px"
