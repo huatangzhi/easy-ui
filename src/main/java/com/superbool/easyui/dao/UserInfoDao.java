@@ -85,20 +85,20 @@ public class UserInfoDao {
         return userInfoList;
     }
 
-
-    public int updateSameId(String cardId, String sameId) {
+    public int updateDepart(String cardId, String depart) {
         String sql = "UPDATE user_info SET same_id = ? WHERE card_id=?";
-        return jdbcTemplate.update(sql, sameId, cardId);
+        return jdbcTemplate.update(sql, depart, cardId);
     }
 
-    public int updateSameId(String cardId) throws Exception {
+    public int updateDepart(String cardId) throws Exception {
         List<UserInfo> sameUsers = getByCardId(cardId);
         if (sameUsers != null && sameUsers.size() > 0) {
-            String sameId = null;
+            String depart = null;
             if (sameUsers.size() > 1) {
-                sameId = sameUsers.stream().map(user -> user.getId().toString()).collect(Collectors.joining(","));
+                depart = sameUsers.stream().map(user -> user.getDepartment()).collect(Collectors.joining(","));
             }
-            return updateSameId(cardId, sameId);
+
+            return updateDepart(cardId, depart);
         }
         return 0;
     }
@@ -113,16 +113,17 @@ public class UserInfoDao {
         String sql = "DELETE FROM user_info WHERE id=?";
         UserInfo userInfo = getById(delId);
         int result = jdbcTemplate.update(sql, delId);
-        updateSameId(userInfo.getCardId());
+        updateDepart(userInfo.getCardId());
 
         return result;
     }
 
     public int userAdd(UserInfo userInfo) throws Exception {
         String sql = "INSERT INTO user_info (card_id, name, department) VALUES (?,?,?)";
-        int result = jdbcTemplate.update(sql, userInfo.getCardId(), userInfo.getName(), userInfo.getDepartment());
+        int result = jdbcTemplate.update(sql, userInfo.getCardId().trim(),
+                userInfo.getName().trim(), userInfo.getDepartment().trim());
         //更新sameId信息
-        updateSameId(userInfo.getCardId());
+        updateDepart(userInfo.getCardId());
 
         return result;
     }
@@ -131,12 +132,12 @@ public class UserInfoDao {
     public int userModify(UserInfo userInfo) throws Exception {
         String sql = "UPDATE user_info SET card_id=?,name=?,department=? WHERE id=?";
         UserInfo user = getById(userInfo.getId());
-        int result = jdbcTemplate.update(sql, userInfo.getCardId(), userInfo.getName(),
-                userInfo.getDepartment(), userInfo.getId());
+        int result = jdbcTemplate.update(sql, userInfo.getCardId().trim(), userInfo.getName().trim(),
+                userInfo.getDepartment().trim(), userInfo.getId());
 
         if (!user.getCardId().equals(userInfo.getCardId())) {
-            updateSameId(user.getCardId());
-            updateSameId(userInfo.getCardId());
+            updateDepart(user.getCardId());
+            updateDepart(userInfo.getCardId());
         }
 
         return result;

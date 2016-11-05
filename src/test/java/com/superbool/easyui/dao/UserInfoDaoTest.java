@@ -57,7 +57,7 @@ public class UserInfoDaoTest {
     @Test
     public void updateSameIdTest() {
         try {
-            int result = userInfoDao.updateSameId("123");
+            int result = userInfoDao.updateDepart("123");
             System.out.println(result);
         } catch (Exception e) {
             e.printStackTrace();
