@@ -1,5 +1,6 @@
 package com.superbool.easyui.web;
 
+import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -120,40 +121,50 @@ public class UserController {
 
         List<UserInfo> userInfos = new ArrayList<>();
         JsonObject result = new JsonObject();
-        try {
-            switch (key) {
-                case "cardId":
-                    userInfos = userInfoDao.getByCardId(value);
-                    break;
-                case "name":
-                    userInfos = userInfoDao.getByName(value);
-                    break;
-                case "department":
-                    userInfos = userInfoDao.getByDepart(value);
-                    break;
-                case "id":
+        if (Strings.isNullOrEmpty(value)) {
+            result.addProperty("errorMsg", "搜索内容不能为空");
+        } else {
+            try {
+                switch (key) {
+                    case "cardId":
+                        userInfos = userInfoDao.getByCardId(value);
+                        break;
+                    case "name":
+                        userInfos = userInfoDao.getByName(value);
+                        break;
+                    case "department":
+                        userInfos = userInfoDao.getByDepart(value);
+                        break;
+                    case "id":
+                        try {
+                            int id = Integer.valueOf(value);
+                            userInfos.add(userInfoDao.getById(id));
+                        } catch (NumberFormatException e) {
+                            result.addProperty("errorMsg", "编号必须是整数");
+                        } catch (Exception e) {
+                            LOGGER.error("get by id error id={}", value, e);
+                            result.addProperty("errorMsg", "没有查询到相关数据");
+                        }
+                        break;
+                    case "sameId":
+                        if (value.equals("是") || value.equals("否")) {
+                            userInfos = userInfoDao.getBySameId(value.equals("是"));
+                        } else {
+                            result.addProperty("errorMsg", "只能搜索是或者否");
+                        }
+                        break;
+                    default:
+                        break;
+                }
 
-                    try {
-                        int id = Integer.valueOf(value);
-                        userInfos.add(userInfoDao.getById(id));
-                    } catch (NumberFormatException e) {
-                        result.addProperty("errorMsg", "编号必须是整数");
-                    } catch (Exception e) {
-                        LOGGER.error("get by id error id={}", value, e);
-                        result.addProperty("errorMsg", "没有查询到相关数据");
-                    }
-                    break;
-                default:
-                    break;
+                JsonElement jsonElement = new Gson().toJsonTree(userInfos);
+                result.add("rows", jsonElement);
+                result.addProperty("total", userInfos.size());
+
+            } catch (Exception e) {
+                LOGGER.error("userSearch error!", e);
+                result.addProperty("errorMsg", "服务器错误");
             }
-
-            JsonElement jsonElement = new Gson().toJsonTree(userInfos);
-            result.add("rows", jsonElement);
-            result.addProperty("total", userInfos.size());
-
-        } catch (Exception e) {
-            LOGGER.error("userSearch error!", e);
-            result.addProperty("errorMsg", "服务器错误");
         }
 
         LOGGER.info("return result={}", result);

@@ -72,6 +72,19 @@ public class UserInfoDao {
         return userInfoList;
     }
 
+    public List<UserInfo> getBySameId(boolean yes) throws Exception {
+        String sqlNull = "SELECT * FROM user_info WHERE same_id IS NULL GROUP BY card_id,department;";
+        String sqlNotNull = "SELECT * FROM user_info WHERE same_id IS NOT NULL GROUP BY card_id,department;";
+
+        String sql = yes ? sqlNull : sqlNotNull;
+
+        List<UserInfo> userInfoList = jdbcTemplate.query(
+                sql,
+                new UserMapper());
+
+        return userInfoList;
+    }
+
 
     public int updateSameId(String cardId, String sameId) {
         String sql = "UPDATE user_info SET same_id = ? WHERE card_id=?";
