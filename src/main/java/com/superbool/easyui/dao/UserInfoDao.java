@@ -17,7 +17,7 @@ public class UserInfoDao {
     private JdbcTemplate jdbcTemplate;
 
     public List<UserInfo> getByPage(int start, int rows) throws Exception {
-        String sql = "SELECT * FROM user_info GROUP BY department,id limit ? offset ? ";
+        String sql = "SELECT * FROM user_info ORDER BY department,card_id limit ? offset ? ";
 
         List<UserInfo> userInfoList = jdbcTemplate.query(
                 sql,
@@ -73,8 +73,8 @@ public class UserInfoDao {
     }
 
     public List<UserInfo> getBySameId(boolean yes) throws Exception {
-        String sqlNull = "SELECT * FROM user_info WHERE same_id IS NULL GROUP BY card_id,department;";
-        String sqlNotNull = "SELECT * FROM user_info WHERE same_id IS NOT NULL GROUP BY card_id,department;";
+        String sqlNull = "SELECT * FROM user_info WHERE same_id IS NULL ORDER BY department,card_id;";
+        String sqlNotNull = "SELECT * FROM user_info WHERE same_id IS NOT NULL ORDER BY card_id,department;";
 
         String sql = yes ? sqlNull : sqlNotNull;
 

@@ -82,7 +82,7 @@
                     return;
                 }
                 else {
-                    $('#dg').datagrid('loadData', {total: result.total, rows: result.rows});
+                    $('#dg').datagrid('loadData', {total: result.total, rows: result.rows, pageSize: result.total});
                     return;
                 }
             });
@@ -90,7 +90,7 @@
     </script>
 </head>
 <body>
-<table id="dg" title="土地规划机构专业技术人员信息" class="easyui-datagrid" style="margin:0 auto;"
+<table id="dg" title="土地规划机构专业技术人员信息" pageSize=20 class="easyui-datagrid" style="margin:0 auto;"
        url="userList"
        toolbar="#toolbar" pagination="true"
        rownumbers="false" fitColumns="true" singleSelect="true">
