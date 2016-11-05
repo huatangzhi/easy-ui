@@ -51,22 +51,22 @@ public class UserInfoDao {
     }
 
     public List<UserInfo> getByName(String name) throws Exception {
-        String sql = "SELECT * FROM user_info WHERE name=? ORDER BY id";
+        String sql = "SELECT * FROM user_info WHERE name LIKE ? ORDER BY id";
 
         List<UserInfo> userInfoList = jdbcTemplate.query(
                 sql,
-                new Object[]{name},
+                new Object[]{"%" + name + "%"},
                 new UserMapper());
 
         return userInfoList;
     }
 
     public List<UserInfo> getByDepart(String depart) throws Exception {
-        String sql = "SELECT * FROM user_info WHERE department=? ORDER BY id";
+        String sql = "SELECT * FROM user_info WHERE department LIKE ? ORDER BY id";
 
         List<UserInfo> userInfoList = jdbcTemplate.query(
                 sql,
-                new Object[]{depart},
+                new Object[]{"%" + depart + "%"},
                 new UserMapper());
 
         return userInfoList;
