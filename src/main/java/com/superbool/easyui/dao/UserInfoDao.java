@@ -51,7 +51,7 @@ public class UserInfoDao {
     }
 
     public List<UserInfo> getByName(String name) throws Exception {
-        String sql = "SELECT * FROM user_info WHERE name LIKE ? ORDER BY id";
+        String sql = "SELECT * FROM user_info WHERE name LIKE ? ORDER BY department,card_id";
 
         List<UserInfo> userInfoList = jdbcTemplate.query(
                 sql,
@@ -62,7 +62,7 @@ public class UserInfoDao {
     }
 
     public List<UserInfo> getByDepart(String depart) throws Exception {
-        String sql = "SELECT * FROM user_info WHERE department LIKE ? ORDER BY id";
+        String sql = "SELECT * FROM user_info WHERE department LIKE ? ORDER BY department,card_id";
 
         List<UserInfo> userInfoList = jdbcTemplate.query(
                 sql,
